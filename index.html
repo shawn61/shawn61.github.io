@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spinning Donut in CLI</title>
+    <style>
+        body {
+            background-color: black;
+            color: white; /* Changed from lime to white */
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #cli {
+            white-space: pre;
+            font-size: 16px;
+            line-height: 1.2;
+            text-align: center;
+        }
+        .welcome-message {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: white; /* Changed from lime to white */
+            animation: blink 1s steps(2, start) infinite;
+        }
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="cli">
+        <div class="welcome-message"></div>
+        <div class="donut-container"></div>
+        <div class="cursor"></div>
+    </div>
+
+    <script>
+        const cli = document.getElementById('cli');
+        const welcomeMessage = document.querySelector('.welcome-message');
+        const donutContainer = document.querySelector('.donut-container');
+        const A = 1, B = 1;
+        let theta = 0, phi = 0;
+
+        const message = "Welcome to shawn61.github.io";
+        let index = 0;
+
+        function typeWelcomeMessage() {
+            if (index < message.length) {
+                welcomeMessage.textContent += message[index];
+                index++;
+                setTimeout(typeWelcomeMessage, 100); // Typing speed (100ms per character)
+            } else {
+                // Start the donut animation after the message is fully typed
+                setTimeout(() => {
+                    welcomeMessage.style.marginBottom = "0"; // Reduce space after message
+                    setInterval(renderDonut, 50);
+                }, 1000); // Wait 1 second before starting the donut
+            }
+        }
+
+        function renderDonut() {
+            const b = [];
+            const z = [];
+            const width = 80;
+            const height = 22;
+            const chars = ".,-~:;=!*#$@";
+
+            for (let k = 0; k < width * height; k++) {
+                b[k] = k % width === width - 1 ? '\n' : ' ';
+                z[k] = 0;
+            }
+
+            for (let j = 0; j < 6.28; j += 0.07) {
+                for (let i = 0; i < 6.28; i += 0.02) {
+                    const c = Math.sin(i);
+                    const d = Math.cos(j);
+                    const e = Math.sin(theta);
+                    const f = Math.sin(j);
+                    const g = Math.cos(theta);
+                    const h = d + 2;
+                    const D = 1 / (c * h * e + f * g + 5);
+                    const l = Math.cos(i);
+                    const m = Math.cos(phi);
+                    const n = Math.sin(phi);
+                    const t = c * h * g - f * e;
+                    const x = Math.floor(40 + 30 * D * (l * h * m - t * n));
+                    const y = Math.floor(12 + 15 * D * (l * h * n + t * m));
+                    const o = x + width * y;
+                    const N = Math.floor(8 * ((f * e - c * d * g) * m - c * d * e - f * g - l * d * n));
+                    if (y < height && y >= 0 && x < width && x >= 0 && D > z[o]) {
+                        z[o] = D;
+                        b[o] = chars[N > 0 ? N : 0];
+                    }
+                }
+            }
+
+            donutContainer.textContent = b.join('');
+            theta += 0.07;
+            phi += 0.03;
+        }
+
+        // Start typing the welcome message
+        typeWelcomeMessage();
+    </script>
+</body>
+</html>
